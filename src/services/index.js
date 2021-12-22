@@ -5,3 +5,4 @@ module.exports.userService = require('./user.service');
 module.exports.expiryDateService = require('./expiryDate.service');
 module.exports.optionScriptService = require('./optionScript.service');
 module.exports.settingService = require('./setting.service');
+module.exports.optionChainService = require('./optionChain.service');

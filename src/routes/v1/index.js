@@ -4,6 +4,7 @@ const userRoute = require('./user.route');
 const expiryDateRoute = require('./expiryDate.route');
 const optionScriptRoute = require('./optionScript.route');
 const settingRoute = require('./setting.route');
+const optionChainRoute = require('./optionChain.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -29,6 +30,10 @@ const defaultRoutes = [
   {
     path: '/settings',
     route: settingRoute,
+  },
+  {
+    path: '/optionChains',
+    route: optionChainRoute,
   },
 ];
 
