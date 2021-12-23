@@ -13,6 +13,8 @@ const logger = require('../config/logger');
 const startCronTasks = () => {
   cron.schedule('*/10 * * * * *', () => {
     logger.info('running a task every 10 seconds');
+    const now = new Date();
+    logger.info(`Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
   });
 
   cron.schedule('15 9 * * * ', () => {
