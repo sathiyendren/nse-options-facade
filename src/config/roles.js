@@ -9,6 +9,8 @@ const allRoles = {
     'manageOptionScripts',
     'getSetting',
     'manageSetting',
+    'manageTransaction',
+    'manageSymbolRate',
   ],
 };
 

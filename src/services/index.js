@@ -6,3 +6,5 @@ module.exports.expiryDateService = require('./expiryDate.service');
 module.exports.optionScriptService = require('./optionScript.service');
 module.exports.settingService = require('./setting.service');
 module.exports.optionChainService = require('./optionChain.service');
+module.exports.transactionService = require('./transaction.service');
+module.exports.symbolRateService = require('./symbolRate.service');
