@@ -1,7 +1,8 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const logger = require('../config/logger');
-const { symbolRateService } = require('../services');
+const { symbolRateService, miscService, expiryDateService } = require('../services');
+const { symbolTypes } = require('../config/optionScript');
 
 const checkHealth = () =>
   new Promise((resolve) => {
@@ -42,28 +43,34 @@ const startCronTasks = () => {
     herokuKeepAliveCall();
   });
 
-  cron.schedule('*/10 * * * * *', () => {
+  cron.schedule('*/10 * * * * *', async () => {
     logger.info('running a task every 10 seconds');
     getCurrentDateTime();
-    symbolRateService.updateNiftyAndBankNifyCurrentPrice(true);
+    const optionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
+    if (optionChainNiftyData) {
+      symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, optionChainNiftyData);
+      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, optionChainNiftyData);
+    }
+    const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
+    if (optionChainBankNiftyData) {
+      symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, optionChainBankNiftyData);
+      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, optionChainBankNiftyData);
+    }
   });
 
   cron.schedule('46 2 * * * ', () => {
     logger.info('running a task every 9:16 AM IST');
     getCurrentDateTime();
-    symbolRateService.updateNiftyAndBankNifyCurrentPrice(false);
   });
 
   cron.schedule('47 2 * * * ', () => {
     logger.info('running a task every 9:17 AM IST');
     getCurrentDateTime();
-    symbolRateService.updateNiftyAndBankNifyCurrentPrice(false);
   });
 
   cron.schedule('48 2 * * * ', () => {
     logger.info('running a task every 9:18 AM IST');
     getCurrentDateTime();
-    symbolRateService.updateNiftyAndBankNifyCurrentPrice(false);
   });
 
   cron.schedule('50 2 * * * ', () => {

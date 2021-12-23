@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { ExpiryDate } = require('../models');
 const ApiError = require('../utils/ApiError');
+const logger = require('../config/logger');
 
 /**
  * Create a expiryDate
@@ -76,6 +77,7 @@ const updateExpiryDateBySymbol = async (symbol, updateBody) => {
 
   Object.assign(expiryDate, updateBody);
   await expiryDate.save();
+  logger.info(`Updated ${symbol} Expiry Dates !!!`);
   return expiryDate;
 };
 
@@ -120,6 +122,35 @@ const deleteAllExpiryDate = async () => {
   return expiryDates;
 };
 
+/**
+ * Update Nifity and BankNifty Current Price
+ * @param {boolean} running
+ * @returns {Promise<OptionScript>}
+ */
+const updateExpiryDatesForSymbol = async (symbol, optionChainData) => {
+  if (optionChainData && optionChainData.records) {
+    const { expiryDates } = optionChainData.records;
+    if (expiryDates) {
+      const params = {
+        symbol,
+      };
+      const expiryDate = await ExpiryDate.findOne(params);
+      params.expiryDates = expiryDates;
+      let updatedExpiryDate = null;
+      if (!expiryDate) {
+        updatedExpiryDate = await createExpiryDate(params);
+      } else {
+        updatedExpiryDate = await updateExpiryDateById(expiryDate.id, params);
+      }
+      if (!updatedExpiryDate) {
+        logger.info(`Unable to update ${symbol} ExpiryDates...`);
+      } else {
+        logger.info(`Updated ${symbol} ExpiryDates !!!`);
+      }
+    }
+  }
+};
+
 module.exports = {
   createExpiryDate,
   queryExpiryDates,
@@ -127,6 +158,7 @@ module.exports = {
   getExpiryDateBySymbol,
   updateExpiryDateById,
   updateExpiryDateBySymbol,
+  updateExpiryDatesForSymbol,
   deleteExpiryDateById,
   deleteExpiryDateBySymbol,
   deleteAllExpiryDate,

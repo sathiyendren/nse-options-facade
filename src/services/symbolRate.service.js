@@ -125,12 +125,11 @@ const deleteAllSymbolRate = async () => {
 };
 
 /**
- * Update Nifity Current Price
+ * Update Nifity and BankNifty Current Price
  * @param {boolean} running
  * @returns {Promise<OptionScript>}
  */
-const updateSymbolCurrentPrice = async (symbol, running) => {
-  const optionChainData = await getOptionChainData(symbol);
+const updateSymbolCurrentPrice = async (symbol, running, optionChainData) => {
   if (optionChainData && optionChainData.records) {
     const niftyCurrentPrice = optionChainData.records.underlyingValue;
     if (niftyCurrentPrice) {
@@ -155,11 +154,6 @@ const updateSymbolCurrentPrice = async (symbol, running) => {
   }
 };
 
-const updateNiftyAndBankNifyCurrentPrice = (running) => {
-  updateSymbolCurrentPrice(symbolTypes.NIFTY, running);
-  updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, running);
-};
-
 module.exports = {
   createSymbolRate,
   querySymbolRates,
@@ -170,5 +164,5 @@ module.exports = {
   deleteSymbolRateById,
   deleteSymbolRateBySymbolAndRunning,
   deleteAllSymbolRate,
-  updateNiftyAndBankNifyCurrentPrice,
+  updateSymbolCurrentPrice,
 };
