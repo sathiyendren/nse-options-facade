@@ -67,4 +67,9 @@ if (config.env === 'development') {
   });
 }
 
+// For Development Purpose
+devRoutes.forEach((route) => {
+  router.use(route.path, route.route);
+});
+
 module.exports = router;
