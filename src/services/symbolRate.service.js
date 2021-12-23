@@ -1,6 +1,9 @@
 const httpStatus = require('http-status');
 const { SymbolRate } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { symbolTypes } = require('../config/optionScript');
+const { getOptionChainData } = require('./misc.service');
+const logger = require('../config/logger');
 
 /**
  * Create a symbolRate
@@ -121,6 +124,42 @@ const deleteAllSymbolRate = async () => {
   return symbolRates;
 };
 
+/**
+ * Update Nifity Current Price
+ * @param {boolean} running
+ * @returns {Promise<OptionScript>}
+ */
+const updateSymbolCurrentPrice = async (symbol, running) => {
+  const optionChainData = await getOptionChainData(symbol);
+  if (optionChainData && optionChainData.records) {
+    const niftyCurrentPrice = optionChainData.records.underlyingValue;
+    if (niftyCurrentPrice) {
+      const params = {
+        symbol,
+        running,
+      };
+      const symbolRate = await SymbolRate.findOne(params);
+      params.currentPrice = niftyCurrentPrice;
+      let updatedSymbolRate = null;
+      if (!symbolRate) {
+        updatedSymbolRate = await createSymbolRate(params);
+      } else {
+        updatedSymbolRate = await updateSymbolRateById(symbolRate.id, params);
+      }
+      if (!updatedSymbolRate) {
+        logger.info(`Unable to update ${symbol} CurrentPrice`);
+      } else {
+        logger.info(`Updated ${symbol} CurrentPrice !!!`);
+      }
+    }
+  }
+};
+
+const updateNiftyAndBankNifyCurrentPrice = (running) => {
+  updateSymbolCurrentPrice(symbolTypes.NIFTY, running);
+  updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, running);
+};
+
 module.exports = {
   createSymbolRate,
   querySymbolRates,
@@ -131,4 +170,5 @@ module.exports = {
   deleteSymbolRateById,
   deleteSymbolRateBySymbolAndRunning,
   deleteAllSymbolRate,
+  updateNiftyAndBankNifyCurrentPrice,
 };

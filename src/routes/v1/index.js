@@ -7,6 +7,7 @@ const settingRoute = require('./setting.route');
 const optionChainRoute = require('./optionChain.route');
 const transactionRoute = require('./transaction.route');
 const symbolRateRoute = require('./symbolRate.route');
+const miscRoute = require('./misc.route');
 
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
@@ -45,6 +46,10 @@ const defaultRoutes = [
   {
     path: '/symbolRates',
     route: symbolRateRoute,
+  },
+  {
+    path: '/misc',
+    route: miscRoute,
   },
 ];
 

@@ -1,28 +1,4 @@
-const httpStatus = require('http-status');
-const https = require('https');
-const axios = require('axios');
-const ApiError = require('../utils/ApiError');
-const logger = require('../config/logger');
-const { optionURLs } = require('../config/optionChain');
-
-const getOptionChainData = (symbol) =>
-  new Promise((resolve) => {
-    const optionChainURL = `${optionURLs.OPTIONCHAIN}${symbol}`;
-    logger.info(optionChainURL);
-    axios({
-      withCredentials: true,
-      url: optionChainURL,
-    })
-      .then((response) => {
-        const responseData = response.data;
-        logger.info(responseData);
-        resolve(responseData.records.data);
-      })
-      .catch((error) => {
-        logger.info(`Error: ${error.message}`);
-        resolve(null);
-      });
-  });
+const { getOptionChainData } = require('./misc.service');
 
 /**
  * Get OptionScript by id
@@ -30,7 +6,8 @@ const getOptionChainData = (symbol) =>
  * @returns {Promise<OptionScript>}
  */
 const queryOptionChain = async (filter) => {
-  const data = await getOptionChainData(filter.symbol);
+  const opdata = await getOptionChainData(filter.symbol);
+  const { data } = opdata.records;
   if (data) {
     const finalData = data.filter(function (item) {
       return item.expiryDate === filter.expiryDate;

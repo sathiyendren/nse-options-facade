@@ -8,3 +8,4 @@ module.exports.settingService = require('./setting.service');
 module.exports.optionChainService = require('./optionChain.service');
 module.exports.transactionService = require('./transaction.service');
 module.exports.symbolRateService = require('./symbolRate.service');
+module.exports.miscService = require('./misc.service');
