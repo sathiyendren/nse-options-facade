@@ -3,10 +3,11 @@ const https = require('https');
 const axios = require('axios');
 const ApiError = require('../utils/ApiError');
 const logger = require('../config/logger');
+const { optionURLs } = require('../config/optionChain');
 
 const getOptionChainData = (symbol) =>
   new Promise((resolve) => {
-    const optionChainURL = `https://www.nseindia.com/api/option-chain-indices?symbol=${symbol}`;
+    const optionChainURL = `${optionURLs.OPTIONCHAIN}${symbol}`;
     logger.info(optionChainURL);
     axios({
       withCredentials: true,
