@@ -58,22 +58,22 @@ const startCronTasks = () => {
     }
   });
 
-  cron.schedule('46 2 * * * ', () => {
+  cron.schedule('46 3 * * * ', () => {
     logger.info('running a task every 9:16 AM IST');
     getCurrentDateTime();
   });
 
-  cron.schedule('47 2 * * * ', () => {
+  cron.schedule('47 3 * * * ', () => {
     logger.info('running a task every 9:17 AM IST');
     getCurrentDateTime();
   });
 
-  cron.schedule('48 2 * * * ', () => {
+  cron.schedule('48 3 * * * ', () => {
     logger.info('running a task every 9:18 AM IST');
     getCurrentDateTime();
   });
 
-  cron.schedule('50 2 * * * ', () => {
+  cron.schedule('50 3 * * * ', () => {
     logger.info('running a task every 9:20 AM IST');
     getCurrentDateTime();
   });
