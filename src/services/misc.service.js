@@ -5,14 +5,14 @@ const { optionURLs } = require('../config/optionChain');
 const getOptionChainData = (symbol) =>
   new Promise((resolve) => {
     const optionChainURL = `${optionURLs.OPTIONCHAIN}${symbol}`;
-    logger.info(optionChainURL);
+    logger.info(`optionChainURL :${optionChainURL}`);
     axios({
       withCredentials: true,
       url: optionChainURL,
     })
       .then((response) => {
         const responseData = response.data;
-        logger.info(responseData);
+        logger.info(`optionChain responseData :${responseData}`);
         resolve(responseData);
       })
       .catch((error) => {

@@ -47,11 +47,13 @@ const startCronTasks = () => {
     logger.info('running a task every 10 seconds');
     getCurrentDateTime();
     const optionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
+    logger.info(`optionChainNiftyData :${optionChainNiftyData}`);
     if (optionChainNiftyData) {
       symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, optionChainNiftyData);
       expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, optionChainNiftyData);
     }
     const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
+    logger.info(`optionChainNiftyData :${optionChainBankNiftyData}`);
     if (optionChainBankNiftyData) {
       symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, optionChainBankNiftyData);
       expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, optionChainBankNiftyData);
