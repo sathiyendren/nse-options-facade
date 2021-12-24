@@ -44,6 +44,7 @@ const startCronTasks = () => {
   });
 
   cron.schedule('*/10 * * * * *', async () => {
+    logger.info('----------------------------------');
     logger.info('running a task every 10 seconds');
     getCurrentDateTime();
     const optionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
@@ -52,6 +53,7 @@ const startCronTasks = () => {
       symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, optionChainNiftyData);
       expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, optionChainNiftyData);
     }
+
     const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
     logger.info(`optionChainNiftyData :${optionChainBankNiftyData}`);
     if (optionChainBankNiftyData) {
