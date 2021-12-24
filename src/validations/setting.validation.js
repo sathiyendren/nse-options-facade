@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
-const { accountTypes } = require('../config/setting');
+const { accountTypes, tradingTypes } = require('../config/setting');
 
 const createSetting = {
   body: Joi.object().keys({
@@ -10,7 +10,9 @@ const createSetting = {
     account: Joi.string().required().valid(accountTypes.PAPER, accountTypes.REAL),
     capital: Joi.number().required().default(100000),
     firstBuyConstant: Joi.number().required().default(2.5),
-    reBuyConstant: Joi.number().required().default(100),
+    reBuyConstant: Joi.number().required().default(5),
+    reBuyCusionConstant: Joi.number().required().default(5),
+    tradingType: Joi.string().default(tradingTypes.NORMAL),
     userId: Joi.string().required().custom(objectId),
   }),
 };
@@ -47,6 +49,8 @@ const updateSetting = {
       capital: Joi.number().required().default(100000),
       firstBuyConstant: Joi.number().required().default(2.5),
       reBuyConstant: Joi.number().required().default(100),
+      reBuyCusionConstant: Joi.number().required().default(5),
+      tradingType: Joi.string().default(tradingTypes.NORMAL),
     })
     .min(1),
 };

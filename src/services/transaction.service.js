@@ -44,6 +44,11 @@ const getTransactionsByActiveTradeDateUser = async (active, tradeDate, userId) =
   return Transaction.find({ active, tradeDate, userId });
 };
 
+const getTransactionsByUserTradeDatePreStart = async (preStart, tradeDate, userId, type, strikePrice, symbol) => {
+  return Transaction.findOne({ preStart, tradeDate, userId, type, strikePrice, symbol });
+};
+
+
 /**
  * Update Transaction by id
  * @param {ObjectId} transactionId
@@ -96,4 +101,5 @@ module.exports = {
   updateTransactionById,
   deleteTransactionById,
   deleteAllTransaction,
+  getTransactionsByUserTradeDatePreStart,
 };

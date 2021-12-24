@@ -18,6 +18,8 @@ const createTransaction = {
     soldPrice: Joi.number().default(0),
     profit: Joi.number().default(0),
     active: Joi.boolean().default(false),
+    preStart: Joi.boolean().default(false),
+    paused: Joi.boolean().default(false),
   }),
 };
 
@@ -30,7 +32,9 @@ const getTransactions = {
     expiryDate: Joi.string(),
     symbol: Joi.string().valid(symbolTypes.NIFTY, symbolTypes.BANKNIFTY),
     tradeDate: Joi.string(),
-    active: Joi.number(),
+    active: Joi.boolean().default(false),
+    preStart: Joi.boolean().default(false),
+    paused: Joi.boolean().default(false),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
@@ -46,7 +50,9 @@ const getTransaction = {
     expiryDate: Joi.string(),
     symbol: Joi.string().valid(symbolTypes.NIFTY, symbolTypes.BANKNIFTY),
     tradeDate: Joi.string(),
-    active: Joi.boolean(),
+    active: Joi.boolean().default(false),
+    preStart: Joi.boolean().default(false),
+    paused: Joi.boolean().default(false),
   }),
 };
 
@@ -70,6 +76,8 @@ const updateTransaction = {
       soldPrice: Joi.number().required().default(0),
       profit: Joi.number().default(0),
       active: Joi.boolean().default(false),
+      preStart: Joi.boolean().default(false),
+      paused: Joi.boolean().default(false),
     })
     .min(1),
 };

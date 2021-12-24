@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { accountTypes } = require('../config/setting');
+const { accountTypes, tradingTypes } = require('../config/setting');
 
 const settingSchema = mongoose.Schema(
   {
@@ -35,6 +35,15 @@ const settingSchema = mongoose.Schema(
     },
     reBuyConstant: {
       type: Number,
+      required: true,
+    },
+    reBuyCusionConstant: {
+      type: Number,
+      required: true,
+    },
+    tradingType: {
+      type: String,
+      enum: [tradingTypes.NORMAL, tradingTypes.NEARRANGE, tradingTypes.ANYTIME],
       required: true,
     },
   },

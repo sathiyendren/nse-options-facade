@@ -62,6 +62,14 @@ const transactionSchema = mongoose.Schema(
       type: Boolean,
       required: false,
     },
+    preStart: {
+      type: Boolean,
+      required: false,
+    },
+    paused: {
+      type: Boolean,
+      required: false,
+    },
   },
   {
     timestamps: true,

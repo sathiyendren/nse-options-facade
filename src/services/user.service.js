@@ -29,6 +29,15 @@ const queryUsers = async (filter, options) => {
 };
 
 /**
+ * Get user by email
+ * @param {string} email
+ * @returns {Promise<User>}
+ */
+ const getAllBlacklistedUsers = async (blacklisted) => {
+  return User.find({ blacklisted });
+};
+
+/**
  * Get user by id
  * @param {ObjectId} id
  * @returns {Promise<User>}
@@ -100,4 +109,5 @@ module.exports = {
   updateUserById,
   deleteUserById,
   deleteAllUser,
+  getAllBlacklistedUsers,
 };

@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const logger = require('../config/logger');
-const { symbolRateService, miscService, expiryDateService } = require('../services');
+const { symbolRateService, miscService, expiryDateService, optionChainService } = require('../services');
 const { symbolTypes } = require('../config/optionScript');
 
 const checkHealth = () =>
@@ -28,10 +28,10 @@ const herokuKeepAliveCall = async () => {
   }
 };
 
-const getCurrentDateTime = () => {
+const isCurrentTimeMatch = (hour, minute) => {
   const now = new Date();
-  // logger.info(`Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
-  logger.info(`Current DateTime :: ${now}`);
+  logger.info(`Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
+  return now.getHours() === hour && now.getMinutes() === minute;
 };
 
 /**
@@ -46,40 +46,46 @@ const startCronTasks = () => {
   cron.schedule('*/10 * * * * *', async () => {
     logger.info('----------------------------------');
     logger.info('running a task every 10 seconds');
-    getCurrentDateTime();
-    const optionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
-    logger.info(`optionChainNiftyData :${optionChainNiftyData}`);
-    if (optionChainNiftyData) {
-      symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, optionChainNiftyData);
-      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, optionChainNiftyData);
+    const nseOptionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
+    logger.info(`nseOptionChainNiftyData :${nseOptionChainNiftyData}`);
+    if (nseOptionChainNiftyData) {
+      symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, nseOptionChainNiftyData);
+      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, nseOptionChainNiftyData);
+      const filteredOptionChainNiftyData = optionChainService.getFilterdOptionChainData(
+        nseOptionChainNiftyData.filtered.data
+      );
+      logger.info(filteredOptionChainNiftyData[0].strikePrice);
+      // if (isCurrentTimeMatch(9, 20)) {
+        optionChainService.updatePreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+      // }
     }
 
-    const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
-    logger.info(`optionChainNiftyData :${optionChainBankNiftyData}`);
-    if (optionChainBankNiftyData) {
-      symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, optionChainBankNiftyData);
-      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, optionChainBankNiftyData);
-    }
+    // const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
+    // logger.info(`optionChainNiftyData :${optionChainBankNiftyData}`);
+    // if (optionChainBankNiftyData) {
+    //   symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, optionChainBankNiftyData);
+    //   expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, optionChainBankNiftyData);
+    // }
   });
 
   cron.schedule('46 3 * * * ', () => {
     logger.info('running a task every 9:16 AM IST');
-    getCurrentDateTime();
+    // getCurrentDateTime();
   });
 
   cron.schedule('47 3 * * * ', () => {
     logger.info('running a task every 9:17 AM IST');
-    getCurrentDateTime();
+    // getCurrentDateTime();
   });
 
   cron.schedule('48 3 * * * ', () => {
     logger.info('running a task every 9:18 AM IST');
-    getCurrentDateTime();
+    // getCurrentDateTime();
   });
 
   cron.schedule('50 3 * * * ', () => {
     logger.info('running a task every 9:20 AM IST');
-    getCurrentDateTime();
+    // getCurrentDateTime();
   });
 };
 

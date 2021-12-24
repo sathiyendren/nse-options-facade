@@ -8,7 +8,13 @@ const symbolTypes = {
   BANKNIFTY: 'BANKNIFTY',
 };
 
+const lotSizes = {
+  NIFTY: 50,
+  BANKNIFTY: 25,
+};
+
 module.exports = {
   optionTypes,
   symbolTypes,
+  lotSizes,
 };
