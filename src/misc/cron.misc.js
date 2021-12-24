@@ -55,9 +55,9 @@ const startCronTasks = () => {
         nseOptionChainNiftyData.filtered.data
       );
       logger.info(filteredOptionChainNiftyData[0].strikePrice);
-      // if (isCurrentTimeMatch(9, 20)) {
+      if (isCurrentTimeMatch(9, 20)) {
         optionChainService.updatePreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
-      // }
+      }
     }
 
     // const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);

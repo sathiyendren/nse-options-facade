@@ -4,6 +4,7 @@ const { getSettingByUserId } = require('./setting.service');
 const { getOptionScriptByUserId } = require('./optionScript.service');
 const { getTransactionsByUserTradeDatePreStart, createTransaction } = require('./transaction.service');
 const logger = require('../config/logger');
+const { tradingTypes } = require('../config/setting');
 
 /**
  * Get OptionScript by id
@@ -112,6 +113,10 @@ const addPreStartForAllUserScripts = (user, setting, optionScript, filteredOptio
 const initPreStartForAllUserScripts = (user, filteredOptionChainData, symbol) =>
   new Promise((resolve) => {
     getSettingByUserId(user._id).then(async (setting) => {
+      if (setting.tradingType !== tradingTypes.NORMAL) {
+        resolve({ user, success: false });
+        return;
+      }
       const optionScripts = await getOptionScriptByUserId(user._id);
       const optionScriptsPromises = [];
       optionScripts.forEach((optionScript) => {
@@ -128,6 +133,7 @@ const initPreStartForAllUserScripts = (user, filteredOptionChainData, symbol) =>
         .catch((error) => {
           // handle error
           logger.info(error);
+          resolve({ user, success: false });
         });
     });
   });

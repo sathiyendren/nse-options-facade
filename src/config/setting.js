@@ -5,7 +5,7 @@ const accountTypes = {
 
 const tradingTypes = {
   NORMAL: 'normal',
-  NEARRANGE: 'near-range',
+  NEAR_RANGE: 'near-range',
   ANYTIME: 'anytime',
 };
 

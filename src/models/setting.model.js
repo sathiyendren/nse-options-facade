@@ -43,7 +43,7 @@ const settingSchema = mongoose.Schema(
     },
     tradingType: {
       type: String,
-      enum: [tradingTypes.NORMAL, tradingTypes.NEARRANGE, tradingTypes.ANYTIME],
+      enum: [tradingTypes.NORMAL, tradingTypes.NEAR_RANGE, tradingTypes.ANYTIME],
       required: true,
     },
   },
