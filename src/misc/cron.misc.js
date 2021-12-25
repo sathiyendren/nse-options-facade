@@ -54,10 +54,12 @@ const startCronTasks = () => {
       const filteredOptionChainNiftyData = optionChainService.getFilterdOptionChainData(
         nseOptionChainNiftyData.filtered.data
       );
-      logger.info(filteredOptionChainNiftyData[0].strikePrice);
       if (isCurrentTimeMatch(9, 20)) {
-        optionChainService.updatePreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+        optionChainService.runPreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
       }
+      // optionChainService.runBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+      optionChainService.runSellForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+
     }
 
     // const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
