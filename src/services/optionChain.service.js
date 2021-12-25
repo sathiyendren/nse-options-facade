@@ -407,6 +407,102 @@ const runSellForTodayScript = async (filteredOptionChainData, symbol) => {
     });
 };
 
+const addSellAllCheckForAllUserScripts = (user, setting, optionScript, filteredOptionChainData, symbol) =>
+  new Promise((resolve) => {
+    logger.info(getTodayDate());
+    const tradeDate = getTodayDate();
+    getLastTransactionByActiveUserTradeDateSell(
+      true,
+      tradeDate,
+      user._id,
+      optionScript.type,
+      optionScript.strikePrice,
+      optionScript.underlying
+    ).then((lastTransactions) => {
+      const lastTransaction = lastTransactions[0];
+      if (lastTransaction && lastTransaction.active) {
+        logger.info('!!!Transaction = ');
+        logger.info(lastTransaction);
+        const optionChainDataArray = filteredOptionChainData.filter((ocData) => {
+          return (
+            optionScript.type === ocData.type &&
+            optionScript.strikePrice === ocData.strikePrice &&
+            optionScript.underlying === ocData.underlying
+          );
+        });
+        if (optionChainDataArray.length > 0) {
+          const optionChainData = optionChainDataArray[0];
+          const currentPrice = optionChainData.lastPrice;
+          logger.info(`SELL SCRIPT!!!`);
+          // implement ALGOMOJO api Sell
+
+          const sellTransaction = {
+            userId: user._id,
+            strikePrice: optionScript.strikePrice,
+            type: optionScript.type,
+            expiryDate: optionScript.expiryDate,
+            symbol: optionScript.underlying,
+            tradeDate,
+            soldPrice: currentPrice,
+            active: false,
+            currentPrice,
+          };
+
+          updateTransactionById(lastTransaction._id, sellTransaction).then((transactionData) => {
+            logger.info('sell Transaction');
+            resolve({ transaction: transactionData, success: true });
+          });
+        } else {
+          logger.info('not sell Transaction');
+          resolve({ transaction: null, success: true });
+        }
+      } else {
+        logger.info('not sell transaction..');
+      }
+    });
+  });
+
+const initSellAllForAllUserScripts = (user, filteredOptionChainData, symbol) =>
+  new Promise((resolve) => {
+    getSettingByUserId(user._id).then(async (setting) => {
+      const optionScripts = await getOptionScriptByUserId(user._id);
+      const optionScriptsPromises = [];
+      optionScripts.forEach((optionScript) => {
+        optionScriptsPromises.push(
+          addSellAllCheckForAllUserScripts(user, setting, optionScript, filteredOptionChainData, symbol)
+        );
+      });
+      Promise.all(optionScriptsPromises)
+        .then((resArray) => {
+          // do something with the responses
+          logger.info('Sell Executed for All Option Script.');
+          resolve({ user, success: true });
+        })
+        .catch((error) => {
+          // handle error
+          logger.info(error);
+          resolve({ user, success: false });
+        });
+    });
+  });
+
+const runSellAllForTodayScript = async (filteredOptionChainData, symbol) => {
+  const nonBlacklistedUsers = await getAllBlacklistedUsers(false);
+  const nonBlacklistedUserPromises = [];
+  nonBlacklistedUsers.forEach((user) => {
+    nonBlacklistedUserPromises.push(initSellAllForAllUserScripts(user, filteredOptionChainData, symbol));
+  });
+  Promise.all(nonBlacklistedUserPromises)
+    .then((resArray) => {
+      // do something with the responses
+      logger.info('Sell Check Executed for All users.');
+    })
+    .catch((error) => {
+      // handle error
+      logger.info(error);
+    });
+};
+
 module.exports = {
   queryOptionChain,
   getFilterdOptionChainData,

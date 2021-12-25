@@ -59,15 +59,28 @@ const startCronTasks = () => {
       }
       optionChainService.runBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
       optionChainService.runSellForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
-
+      if (isCurrentTimeMatch(3, 20)) {
+        optionChainService.runPreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+      }
     }
 
-    // const optionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
-    // logger.info(`optionChainNiftyData :${optionChainBankNiftyData}`);
-    // if (optionChainBankNiftyData) {
-    //   symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, optionChainBankNiftyData);
-    //   expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, optionChainBankNiftyData);
-    // }
+    const nseOptionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
+    logger.info(`nseOptionChainBankNiftyData :${nseOptionChainBankNiftyData}`);
+    if (nseOptionChainBankNiftyData) {
+      symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, nseOptionChainBankNiftyData);
+      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, nseOptionChainBankNiftyData);
+      const filteredOptionChainBankNiftyData = optionChainService.getFilterdOptionChainData(
+        nseOptionChainBankNiftyData.filtered.data
+      );
+      if (isCurrentTimeMatch(9, 20)) {
+        optionChainService.runPreStartForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+      }
+      optionChainService.runBuyForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+      optionChainService.runSellForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+      if (isCurrentTimeMatch(3, 20)) {
+        optionChainService.runPreStartForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+      }
+    }
   });
 
   cron.schedule('46 3 * * * ', () => {
