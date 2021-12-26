@@ -78,7 +78,7 @@ const startCronTasks = () => {
       optionChainService.runBuyForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
       optionChainService.runSellForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
       if (isCurrentTimeMatch(3, 20)) {
-        optionChainService.runPreStartForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+        optionChainService.runSellAllForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
       }
     }
   });

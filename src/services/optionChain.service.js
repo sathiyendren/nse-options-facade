@@ -509,4 +509,5 @@ module.exports = {
   runPreStartForTodayScript,
   runBuyForTodayScript,
   runSellForTodayScript,
+  runSellAllForTodayScript,
 };
