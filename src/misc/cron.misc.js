@@ -30,8 +30,13 @@ const herokuKeepAliveCall = async () => {
 
 const isCurrentTimeMatch = (hour, minute) => {
   const now = new Date();
-  logger.info(`Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
+  logger.info(` #### Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()} ####`);
   return now.getHours() === hour && now.getMinutes() === minute;
+};
+
+const getCurrentDateTime = () => {
+  const now = new Date();
+  logger.info(`Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
 };
 
 /**
@@ -43,11 +48,12 @@ const startCronTasks = () => {
     herokuKeepAliveCall();
   });
 
-  cron.schedule('*/10 * * * * *', async () => {
+  cron.schedule('*/5 * * * * *', async () => {
     logger.info('----------------------------------');
+    getCurrentDateTime();
     logger.info('running a task every 10 seconds');
     const nseOptionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
-    logger.info(`nseOptionChainNiftyData :${nseOptionChainNiftyData}`);
+    // logger.info(`nseOptionChainNiftyData :${nseOptionChainNiftyData}`);
     if (nseOptionChainNiftyData) {
       symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, nseOptionChainNiftyData);
       expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, nseOptionChainNiftyData);
@@ -60,12 +66,12 @@ const startCronTasks = () => {
       optionChainService.runBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
       optionChainService.runSellForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
       if (isCurrentTimeMatch(3, 20)) {
-        optionChainService.runPreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+        optionChainService.runSellAllForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
       }
     }
 
     const nseOptionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
-    logger.info(`nseOptionChainBankNiftyData :${nseOptionChainBankNiftyData}`);
+    // logger.info(`nseOptionChainBankNiftyData :${nseOptionChainBankNiftyData}`);
     if (nseOptionChainBankNiftyData) {
       symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, nseOptionChainBankNiftyData);
       expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, nseOptionChainBankNiftyData);

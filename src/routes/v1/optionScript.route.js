@@ -9,7 +9,7 @@ const router = express.Router();
 router
   .route('/')
   .post(
-    auth('manageOptionScripts'),
+    // auth('manageOptionScripts'),
     validate(optionScriptValidation.createOptionScript),
     optionScriptController.createOptionScript
   )
