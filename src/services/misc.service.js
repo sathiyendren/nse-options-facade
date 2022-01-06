@@ -10,7 +10,6 @@ const getOptionChainData = (symbol) =>
       .get(optionChainURL)
       .then((response) => {
         const responseData = response.data;
-        logger.info(`optionChain responseData :${responseData}`);
         resolve(responseData);
       })
       .catch((error) => {
@@ -37,7 +36,7 @@ const getFilterdOptionChainData = (optionChainData) =>
   });
 const getTodayDate = () => {
   const now = new Date();
-  return `${now.getDate()}-${now.getMonth()}-${now.getFullYear()}`;
+  return `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
 };
 module.exports = {
   getOptionChainData,

@@ -46,6 +46,10 @@ const settingSchema = mongoose.Schema(
       enum: [tradingTypes.NORMAL, tradingTypes.NEAR_RANGE, tradingTypes.ANYTIME],
       required: true,
     },
+    trailingSLConstant: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

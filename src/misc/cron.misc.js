@@ -10,7 +10,6 @@ const checkHealth = () =>
       .get('https://nse-options-facade.herokuapp.com/v1/misc/ping')
       .then((response) => {
         const responseData = response.data;
-        logger.info(responseData);
         resolve(true);
       })
       .catch((error) => {
@@ -39,74 +38,85 @@ const getCurrentDateTime = () => {
   logger.info(`Current Time :: ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
 };
 
+const initNiftyOptionChain = () =>
+  new Promise((resolve) => {
+    miscService.getOptionChainData(symbolTypes.NIFTY).then((nseOptionChainNiftyData) => {
+      // logger.info(`nseOptionChainNiftyData :${nseOptionChainNiftyData}`);
+      if (nseOptionChainNiftyData && nseOptionChainNiftyData.filtered && nseOptionChainNiftyData.filtered.data) {
+        symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, nseOptionChainNiftyData);
+        const filteredOptionChainNiftyData = optionChainService.getFilterdOptionChainData(
+          nseOptionChainNiftyData.filtered.data
+        );
+        if (filteredOptionChainNiftyData) {
+          if (isCurrentTimeMatch(9, 20)) {
+            optionChainService.runPreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+          }
+          optionChainService.runBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+          optionChainService.runSellForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+          if (isCurrentTimeMatch(3, 25)) {
+            optionChainService.runSellAllForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+          }
+          // Initialization
+          if (isCurrentTimeMatch(9, 16)) {
+            expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, nseOptionChainNiftyData);
+            optionChainService.runNearRangeBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
+          }
+        }
+      }
+      resolve({});
+    });
+  });
+
+const initBankNiftyOptionChain = () =>
+  new Promise((resolve) => {
+    miscService.getOptionChainData(symbolTypes.BANKNIFTY).then((nseOptionChainBankNiftyData) => {
+      // logger.info(`nseOptionChainBankNiftyData :${nseOptionChainBankNiftyData}`);
+      if (nseOptionChainBankNiftyData && nseOptionChainBankNiftyData.filtered && nseOptionChainBankNiftyData.filtered.data) {
+        symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, nseOptionChainBankNiftyData);
+        const filteredOptionChainBankNiftyData = optionChainService.getFilterdOptionChainData(
+          nseOptionChainBankNiftyData.filtered.data
+        );
+        if (filteredOptionChainBankNiftyData) {
+          if (isCurrentTimeMatch(9, 20)) {
+            optionChainService.runPreStartForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+          }
+          optionChainService.runBuyForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+          optionChainService.runSellForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+          if (isCurrentTimeMatch(3, 25)) {
+            optionChainService.runSellAllForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+          }
+          // Initialization
+          if (isCurrentTimeMatch(9, 16)) {
+            expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, nseOptionChainBankNiftyData);
+            optionChainService.runNearRangeBuyForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
+          }
+        }
+      }
+      resolve({});
+    });
+  });
 /**
  * Starts All Cron Tasks
  */
 const startCronTasks = () => {
-  cron.schedule('*/15 * * * *', () => {
-    logger.info('running a task every 15 minute');
-    herokuKeepAliveCall();
-  });
+  // cron.schedule('*/15 * * * *', () => {
+  //   logger.info('running a task every 15 minute');
+  //   herokuKeepAliveCall();
+  // });
 
-  cron.schedule('*/5 * * * * *', async () => {
+  cron.schedule('*/3 * * * * *', async () => {
     logger.info('----------------------------------');
     getCurrentDateTime();
-    logger.info('running a task every 10 seconds');
-    const nseOptionChainNiftyData = await miscService.getOptionChainData(symbolTypes.NIFTY);
-    // logger.info(`nseOptionChainNiftyData :${nseOptionChainNiftyData}`);
-    if (nseOptionChainNiftyData) {
-      symbolRateService.updateSymbolCurrentPrice(symbolTypes.NIFTY, true, nseOptionChainNiftyData);
-      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, nseOptionChainNiftyData);
-      const filteredOptionChainNiftyData = optionChainService.getFilterdOptionChainData(
-        nseOptionChainNiftyData.filtered.data
-      );
-      if (isCurrentTimeMatch(9, 20)) {
-        optionChainService.runPreStartForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
-      }
-      optionChainService.runBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
-      optionChainService.runSellForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
-      if (isCurrentTimeMatch(3, 20)) {
-        optionChainService.runSellAllForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
-      }
-    }
-
-    const nseOptionChainBankNiftyData = await miscService.getOptionChainData(symbolTypes.BANKNIFTY);
-    // logger.info(`nseOptionChainBankNiftyData :${nseOptionChainBankNiftyData}`);
-    if (nseOptionChainBankNiftyData) {
-      symbolRateService.updateSymbolCurrentPrice(symbolTypes.BANKNIFTY, true, nseOptionChainBankNiftyData);
-      expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, nseOptionChainBankNiftyData);
-      const filteredOptionChainBankNiftyData = optionChainService.getFilterdOptionChainData(
-        nseOptionChainBankNiftyData.filtered.data
-      );
-      if (isCurrentTimeMatch(9, 20)) {
-        optionChainService.runPreStartForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
-      }
-      optionChainService.runBuyForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
-      optionChainService.runSellForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
-      if (isCurrentTimeMatch(3, 20)) {
-        optionChainService.runSellAllForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
-      }
-    }
-  });
-
-  cron.schedule('46 3 * * * ', () => {
-    logger.info('running a task every 9:16 AM IST');
-    // getCurrentDateTime();
-  });
-
-  cron.schedule('47 3 * * * ', () => {
-    logger.info('running a task every 9:17 AM IST');
-    // getCurrentDateTime();
-  });
-
-  cron.schedule('48 3 * * * ', () => {
-    logger.info('running a task every 9:18 AM IST');
-    // getCurrentDateTime();
-  });
-
-  cron.schedule('50 3 * * * ', () => {
-    logger.info('running a task every 9:20 AM IST');
-    // getCurrentDateTime();
+    logger.info('running a task every 5 seconds');
+    Promise.all([initBankNiftyOptionChain()]) // initNiftyOptionChain(),
+      .then(() => {
+        // do something with the responses
+        logger.info('OptionChain Executed for All users.');
+      })
+      .catch((error) => {
+        // handle error
+        logger.info(error);
+      });
   });
 };
 

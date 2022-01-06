@@ -39,7 +39,6 @@ const resetPassword = catchAsync(async (req, res) => {
 const sendVerificationEmail = catchAsync(async (req, res) => {
   const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
   // eslint-disable-next-line no-console
-  console.log(verifyEmailToken);
   await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
   res.status(httpStatus.NO_CONTENT).send();
 });

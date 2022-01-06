@@ -46,6 +46,10 @@ const transactionSchema = mongoose.Schema(
       type: Number,
       required: false,
     },
+    lowestPrice: {
+      type: Number,
+      required: false,
+    },
     currentPrice: {
       type: Number,
       required: false,
@@ -76,18 +80,18 @@ const transactionSchema = mongoose.Schema(
   }
 );
 
-transactionSchema.pre('save', function (next) {
-  if (this.currentPrice && this.currentPrice > 0) {
-    this.profit = (this.currentPrice - this.boughtPrice) * this.quantity;
-  }
+// transactionSchema.pre('save', function (next) {
+//   if (this.currentPrice && this.currentPrice > 0) {
+//     this.profit = (this.currentPrice - this.boughtPrice) * this.quantity;
+//   }
 
-  if (this.soldPrice && this.soldPrice > 0) {
-    this.active = false;
-  } else {
-    this.active = true;
-  }
-  next();
-});
+//   if (this.soldPrice && this.soldPrice > 0) {
+//     this.active = false;
+//   } else {
+//     this.active = true;
+//   }
+//   next();
+// });
 
 // Add plugin that converts mongoose to json
 transactionSchema.plugin(toJSON);
