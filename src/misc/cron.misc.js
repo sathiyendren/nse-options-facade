@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const logger = require('../config/logger');
+
 const { symbolRateService, miscService, expiryDateService, optionChainService } = require('../services');
 const { symbolTypes } = require('../config/optionScript');
 
@@ -57,7 +58,7 @@ const initNiftyOptionChain = () =>
             optionChainService.runSellAllForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
           }
           // Initialization
-          if (isCurrentTimeMatch(9, 16)) {
+          if (isCurrentTimeMatch(9, 13)) {
             expiryDateService.updateExpiryDatesForSymbol(symbolTypes.NIFTY, nseOptionChainNiftyData);
             optionChainService.runNearRangeBuyForTodayScript(filteredOptionChainNiftyData, symbolTypes.NIFTY);
           }
@@ -86,7 +87,7 @@ const initBankNiftyOptionChain = () =>
             optionChainService.runSellAllForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
           }
           // Initialization
-          if (isCurrentTimeMatch(9, 16)) {
+          if (isCurrentTimeMatch(9, 14)) {
             expiryDateService.updateExpiryDatesForSymbol(symbolTypes.BANKNIFTY, nseOptionChainBankNiftyData);
             optionChainService.runNearRangeBuyForTodayScript(filteredOptionChainBankNiftyData, symbolTypes.BANKNIFTY);
           }

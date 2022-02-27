@@ -7,7 +7,7 @@ const getOptionChainData = (symbol) =>
     const optionChainURL = `${optionURLs.OPTIONCHAIN}${symbol}`;
     logger.info(`optionChainURL :${optionChainURL}`);
     axios
-      .get(optionChainURL)
+      .get(optionChainURL, { headers: { referer: 'https://www.nseindia.com/option-chain' } })
       .then((response) => {
         const responseData = response.data;
         resolve(responseData);

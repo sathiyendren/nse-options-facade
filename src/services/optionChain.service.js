@@ -216,6 +216,7 @@ const addBuyCheckForAllUserScripts = (user, setting, optionScript, filteredOptio
           const ltQuantitySoldPrice =
             Math.round(setting.capital / (ltLotSizeSoldPrice * ltLowestPrice)) * ltLotSizeSoldPrice;
           const profitDifference = ltQuantitySoldPrice * (currentPrice - ltLowestPrice);
+          logger.info(`${symbol} --BUY :: ${optionScript.strikePrice} ${optionScript.type}`);
           logger.info(`${symbol} --BUY profitDifference :: ${profitDifference}`);
           const firstBuyCusionCaptial = (setting.capital * setting.firstBuyConstant) / 100;
           logger.info(`${symbol} --BUY firstBuyCusionCaptial :: ${firstBuyCusionCaptial}`);
@@ -316,6 +317,7 @@ const addSellCheckForAllUserScripts = (user, setting, optionScript, filteredOpti
           const { lowestPrice } = lastTransaction;
           const profit = (currentPrice - lastTransaction.boughtPrice) * lastTransaction.quantity;
           const SLPrice = highestPrice - 5000 / lastTransaction.quantity;
+          logger.info(`${symbol} --SELL :: ${optionScript.strikePrice} ${optionScript.type}`);
           logger.info(`${symbol} -- SELL SLPrice :: ${SLPrice}`);
           const profitLossDifference = lastTransaction.quantity * (highestPrice - currentPrice);
           logger.info(`${symbol} -- SELL profitLossDifference :: ${profitLossDifference}`);
